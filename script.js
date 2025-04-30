@@ -17,12 +17,33 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     tasks.push(newTask);
     saveTask();
+    renderTask(newTask);
     todoInput.value = ""; //this clears the input
     console.log(tasks);
   });
 
   function renderTask(task) {
-    console.log(task);
+    const li = document.createElement("li");
+    li.setAttribute("list-id", task.id);
+    if (task.completed) li.classList.add("completed")
+    li.innerHTML = `
+    <span>${task.text}</span>
+    <button>delete</button>`
+    li.addEventListener("click", (e) => {
+      if (e.target.tagName === "BUTTON") return
+      task.completed = !task.completed;
+      li.classList.toggle("completed")
+      saveTask();
+    })
+
+    li.querySelector("button").addEventListener('click', (e) => {
+      e.stopPropagation(); //Prevents toggle from firing
+      tasks = tasks.filter((t) => t.id !== task.id)
+      li.remove();
+      saveTask();
+    })
+
+    todoList.appendChild(li);
   }
 
   function saveTask() {
